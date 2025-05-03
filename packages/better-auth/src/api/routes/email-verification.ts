@@ -418,6 +418,17 @@ export const verifyEmail = createAuthEndpoint(
 					},
 				});
 			}
+		} else {
+			const currentSession = await getSessionFromCtx(ctx);
+			if (currentSession && currentSession.user.email === parsed.email) {
+				await setSessionCookie(ctx, {
+					session: currentSession.session,
+					user: {
+						...currentSession.user,
+						emailVerified: true,
+					},
+				});
+			}
 		}
 
 		if (ctx.query.callbackURL) {
